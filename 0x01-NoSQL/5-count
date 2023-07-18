@@ -1,0 +1,5 @@
+// Displays the number of documents in the collection school:
+//	The database name will be passed as option of mong command
+
+db.school.count()
+
