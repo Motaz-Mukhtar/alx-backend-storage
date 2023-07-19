@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
 """
-    Provides some stats about Nginx logs stored in MogoDB.
+    Provides some stats about Nginx logs stored in MongoDB.
 """
 from pymongo import MongoClient
 
 
 if __name__ == "__main__":
-    client = MongoClient("mongodb://127.0.0.1:27017")
-    nginx_collection = client.logs.nginx
+    client = MongoClient('mongodb://127.0.0.1:27017')
+    nginx = client.logs.nginx
 
-    result = nginx_collection.find()
-    doc_list = [doc for doc in result]
+    methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
-    print(f"{len(doc_list)} logs")
-    print(f"""Methods:
-    method GET: {nginx_collection.count_documents({'method': 'GET'})}
-    method POST: {nginx_collection.count_documents({'method': 'POST'})}
-    method PUT: {nginx_collection.count_documents({'method': 'PUT'})}
-    method PATCH: {nginx_collection.count_documents({'method': 'PATCH'})}
-    method DELETE: {nginx_collection.count_documents({'method': 'DELETE'})}
-{nginx_collection.count_documents({'path': '/status'})} status check""")
-    client.close()
+    print("{} logs".format(nginx.count_documents({})))
+
+    for method in methods:
+        print("\tmethod {}: {}".format(
+                    method, nginx.count_documents({'method': method})))
+    print("{} status check".format(nginx.count_documents({'path': '/status'})))
