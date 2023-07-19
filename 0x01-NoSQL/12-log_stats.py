@@ -10,16 +10,14 @@ if __name__ == "__main__":
     nginx_collection = client.logs.nginx
 
     result = nginx_collection.find()
-    doc_list = [doc for i in result]
+    doc_list = [doc for doc in result]
 
     print(f"{len(doc_list)} logs")
-    print(f"""
-    Methods:
+    print(f"""Methods:
         method GET: {nginx_collection.count_documents({'method': 'GET'})}
         method POST: {nginx_collection.count_documents({'method': 'POST'})}
         method PUT: {nginx_collection.count_documents({'method': 'PUT'})}
         method PATCH: {nginx_collection.count_documents({'method': 'PATCH'})}
         method DELETE: {nginx_collection.count_documents({'method': 'DELETE'})}
-    {nginx_collection.count_documents({'path': '/status'})} status check
-    """)
+{nginx_collection.count_documents({'path': '/status'})} status check""")
     client.close()
