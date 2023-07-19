@@ -2,12 +2,9 @@
 """
     Write a function def update_topics(mongo_collection, name, topics):
 """
-from pymongo.collection import Collection
-from typing import List
 
 
-def update_topics(mongo_collection: Collection, name: str,
-                  topics: List[str]) -> None:
+def update_topics(mongo_collection, name, topics):
     """
         Change all topics of a school document based on the name.
     """

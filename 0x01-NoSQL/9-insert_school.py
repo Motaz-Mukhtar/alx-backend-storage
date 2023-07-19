@@ -2,10 +2,9 @@
 """
     Write function def insert_school(mongo_collection, **kwargs):
 """
-from pymongo.collection import Collection
 
 
-def insert_school(mongo_collection: Collection, **kwargs: dict):
+def insert_school(mongo_collection, **kwargs):
     """
         Inserts a new document in a collection
         based on kwargs
