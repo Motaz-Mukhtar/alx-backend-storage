@@ -19,8 +19,25 @@ def count_calls(method: Callable) -> Callable:
         """
             Incerement.
         """
-        self._redis.incer(method.__qualname__)
+        self._redis.incr(method.__qualname__)
         return method(self, *args, **kwargs)
+    return wrapper
+
+
+def call_history(method: Callable) -> Callable:
+    """
+        Store the history of inputs and outputs
+        for the particular function.
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """
+            Wrapper Function.
+        """
+        self._redis.rpush('{}:inputs'.format(method.__qualname__), str(args))
+        result = method(self, *args, **kwargs)
+        self._redis.rpush('{}:outputs'.format(method.__qualname__), result)
+        return result
     return wrapper
 
 
@@ -36,6 +53,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
             Generate a random key store the input
@@ -54,11 +72,9 @@ class Cache:
              the data back to the desired format.
         """
         data = self._redis.get(key)
-
-        if not data:
-            return None
-
-        return fn(data)
+        if fn:
+            return fn(data)
+        return data
 
     def get_str(self, key: str) -> str:
         """
@@ -71,15 +87,3 @@ class Cache:
             Convert the data to integer.
         """
         return self.get(key, int)
-
-
-
-cache = Cache()
-
-cache.store(b"first")
-print(cache.get(cache.store.__qualname__))
-
-cache.store(b"second")
-cache.store(b"third")
-print(cache.get(cache.store.__qualname__))
-
