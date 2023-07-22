@@ -53,9 +53,9 @@ def replay(method: Callable):
     inputs_list = rd.lrange('{}:inputs'.format(method_name), 0, -1)
     outputs_list = rd.lrange('{}:outputs'.format(method_name), 0, -1)
 
-    print("{} was called {} times".format(method_name, number_of_calls))
+    print("{} was called {} times:".format(method_name, number_of_calls))
     for i, o in zip(inputs_list, outputs_list):
-        print("{}(*({},)) -> {}".format(method_name, i.decode('utf-8'),
+        print("{}(*{}) -> {}".format(method_name, i.decode('utf-8'),
                                         o.decode('utf-8')))
 
 
@@ -105,3 +105,10 @@ class Cache:
             Convert the data to integer.
         """
         return self.get(key, int)
+
+cache = Cache()
+cache.store("foo")
+cache.store("bar")
+cache.store(42)
+replay(cache.store)
+
